@@ -4,7 +4,7 @@
 {% load martortags %}
 {% load bleach_tags %}
 
-{% block title %} {% translate "Product Details" %} {% endblock title %}
+{% block title %} {% translate "Project Details" %} {% endblock title %}
 
 {% block stylesheets %}
   {{ block.super }}
@@ -18,12 +18,12 @@
         <div class="row mb-2">
 
           <div class="col-sm-6">
-            <h1>{% translate "Product" %} {{ DB_product_query.name }}</h1>
+            <h1>{% translate "Project" %} {{ DB_product_query.name }}</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="/">{% translate "Home" %}</a></li>
-              <li class="breadcrumb-item"><a href="/product/list/">{% translate "Products" %}</a></li>
+              <li class="breadcrumb-item"><a href="/product/list/">{% translate "Projects" %}</a></li>
               <li class="breadcrumb-item active">{{ DB_product_query.name | bleach }}</li>
             </ol>
           </div>

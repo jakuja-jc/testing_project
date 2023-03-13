@@ -14,6 +14,7 @@ DEFECTDOJO_CONFIG = {
 
 DJANGO_CONFIG = {
 	'secret_key': 'django-insecure-key-CHANGEMEPLEASE-pKj9bd9h7*RMCuU',
+	# 'debug': False,
 	'debug': False,
 	'admin_module': False,
 	'allowed_hosts': '[\'*\']',
@@ -32,8 +33,8 @@ PETEREPORT_TEMPLATES = {
 	'report_html_name': 'PEN-HTML',
 	'report_pdf_name': 'PEN-PDF',
 	'report_pdf_language': "en",
-	'report_pdf_title_background': "title.png", # title.png, blank.png - location: app/preport/templates/tpl/pdf/
-	'report_pdf_pages_background': "title.png", # title.png, blank.png - location: app/preport/templates/tpl/pdf/
+	'report_pdf_title_background': "cover-1.png", # title.png, blank.png - location: app/preport/templates/tpl/pdf/
+	'report_pdf_pages_background': "blank.png", # title.png, blank.png - location: app/preport/templates/tpl/pdf/
 	'report_jupyter_name': 'PEN-JUPYTER',
 	'initial_text': 'TBC',
 	'titlepage-color': "e6e2e2",
@@ -43,9 +44,10 @@ PETEREPORT_TEMPLATES = {
 }
 
 PETEREPORT_MARKDOWN = {
-	'author': 'Pentest company',
-	'subject': 'Pentest Report',
-	'website': 'https://github.com/1modm/petereport',
+	'author': 'PT. Mitra Integrasi Informatika',
+	'subject': 'Technical Compliance Report',
+	'website': 'https://mii.co.id',
+	# 'martor_upload_method': 'MEDIA', # BASE64 (stored in DB) or MEDIA (path not protected, must be set 'debug': True. This is highly insecure and not encouraged for production use. Should be configured the web server (apache, nginx, etc) to serve the media content using a protected link) 
 	'martor_upload_method': 'BASE64', # BASE64 (stored in DB) or MEDIA (path not protected, must be set 'debug': True. This is highly insecure and not encouraged for production use. Should be configured the web server (apache, nginx, etc) to serve the media content using a protected link) 
 	'media_host': 'http://127.0.0.1:8000' # If docker deployment, set https://<HOST IP>, else for django deployment http://<HOST IP>:8000 
 }

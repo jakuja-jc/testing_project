@@ -1,191 +1,218 @@
 {% load i18n%}
-  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+  <a href="/" class="brand-link">
+    <center>
+      <span class="brand-text font-weight-light">MII CAS</span>
+    </center>
+  </a>
 
-    <a href="/" class="brand-link">
-      <center>
-        <span class="brand-text font-weight-light">PeTeReport Tool</span>
-      </center>
-    </a>
-
-    <div class="sidebar">
-
-      <nav class="mt-2">
-        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-          <li class="nav-item">
-            <a href="/" class="nav-link">
-              <i class="nav-icon fas fa-tachometer-alt text-light"></i>
-              <p>
-                {% translate "Dashboard" %}
-              </p>
-            </a>
-          </li>
-
-  {% if user.groups.all.0|stringformat:'s' == "administrator" %}
-
-          <li class="nav-item">
-            <a href="/" class="nav-link">
-              <i class="nav-icon fas fa-cogs text-info"></i>
-              <p>
-                {% translate "Configuration" %}
-                <i class="right fas fa-angle-left"></i>
-              </p>
-            </a>
-
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="/configuration/users" class="nav-link">
-                  <i class="nav-icon fas fa-id-card"></i>
-                  <p>{% translate "Users" %}</p>
-                </a>
-              </li>
-            </ul>
-
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="/configuration/user/add" class="nav-link">
-                  <i class="nav-icon fas fa-users-cog"></i>
-                  <p>{% translate "Add User" %}</p>
-                </a>
-              </li>
-            </ul>
-
-          </li>
-  {% endif %}
-
-          <li class="nav-item">
-            <a href="/product/list" class="nav-link">
-              <i class="nav-icon fas fa-th text-primary"></i>
-              <p>
-                {% translate "Products" %}
-                <i class="right fas fa-angle-left"></i>
-              </p>
-            </a>
-
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="/product/list" class="nav-link">
-                  <i class="nav-icon fas fa-table"></i>
-                  <p>{% translate "All Products" %}</p>
-                </a>
-              </li>
-            </ul>
+  <div class="sidebar">
+    <nav class="mt-2">
+      <ul
+        class="nav nav-pills nav-sidebar flex-column"
+        data-widget="treeview"
+        role="menu"
+        data-accordion="false"
+      >
+        <li class="nav-item">
+          <a href="/" class="nav-link">
+            <i class="nav-icon fas fa-tachometer-alt text-light"></i>
+            <p>{% translate "Dashboard" %}</p>
+          </a>
+        </li>
 
         {% if user.groups.all.0|stringformat:'s' == "administrator" %}
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="/product/add" class="nav-link">
-                  <i class="nav-icon fas fa-edit"></i>
-                  <p>{% translate "Add Product" %}</p>
-                </a>
-              </li>
-            </ul>
+
+        <li class="nav-item">
+          <a href="/" class="nav-link">
+            <i class="nav-icon fas fa-cogs text-info"></i>
+            <p>
+              {% translate "Configuration" %}
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
+
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="/configuration/users" class="nav-link">
+                <i class="nav-icon fas fa-id-card"></i>
+                <p>{% translate "Users" %}</p>
+              </a>
+            </li>
+          </ul>
+
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="/configuration/user/add" class="nav-link">
+                <i class="nav-icon fas fa-users-cog"></i>
+                <p>{% translate "Add User" %}</p>
+              </a>
+            </li>
+          </ul>
+        </li>
         {% endif %}
 
-          </li>
+        <li class="nav-item">
+          <a href="/product/list" class="nav-link">
+            <i class="nav-icon fas fa-th text-primary"></i>
+            <p>
+              <!-- {% translate "Products" %} -->
+              Projects
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
 
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="/product/list" class="nav-link">
+                <i class="nav-icon fas fa-table"></i>
+                <!-- <p>{% translate "All Products" %}</p> -->
+                <p>All Projects</p>
+              </a>
+            </li>
+          </ul>
 
-          <li class="nav-item">
-            <a href="/product/list" class="nav-link">
-              <i class="nav-icon fas fa-copy text-success"></i>
-              <p>
-                {% translate "Reports" %}
-                <i class="right fas fa-angle-left"></i>
-              </p>
-            </a>
+          {% if user.groups.all.0|stringformat:'s' == "administrator" %}
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="/product/add" class="nav-link">
+                <i class="nav-icon fas fa-edit"></i>
+                <!-- <p>{% translate "Add Product" %}</p> -->
+                <p>Add Project</p>
+              </a>
+            </li>
+          </ul>
+          {% endif %}
+        </li>
 
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="/report/list" class="nav-link">
-                  <i class="nav-icon fas fa-table"></i>
-                  <p>{% translate "All Reports" %}</p>
-                </a>
-              </li>
-            </ul>
+        <li class="nav-item">
+          <a href="/product/list" class="nav-link">
+            <i class="nav-icon fas fa-copy text-success"></i>
+            <p>
+              {% translate "Reports" %}
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
 
-        {% if user.groups.all.0|stringformat:'s' == "administrator" %}
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="/report/add" class="nav-link">
-                  <i class="nav-icon fas fa-edit"></i>
-                  <p>{% translate "Add Report" %}</p>
-                </a>
-              </li>
-            </ul>
-        {% endif %}
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="/report/list" class="nav-link">
+                <i class="nav-icon fas fa-table"></i>
+                <p>{% translate "All Reports" %}</p>
+              </a>
+            </li>
+          </ul>
 
-          </li>
+          {% if user.groups.all.0|stringformat:'s' == "administrator" %}
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="/report/add" class="nav-link">
+                <i class="nav-icon fas fa-edit"></i>
+                <p>{% translate "Add Report" %}</p>
+              </a>
+            </li>
+          </ul>
+          {% endif %}
+        </li>
 
-
-          <li class="nav-item">
-            <a href="/finding/open/" class="nav-link">
-              <i class="nav-icon fas fa-bug text-danger"></i>
-              <p>
-                {% translate "Findings" %}
-                <i class="fas fa-angle-left right"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="/finding/open/" class="nav-link">
-                  <i class="nav-icon fas fa-exclamation-triangle"></i>
-                  <p>{% translate "Open Findings" %}</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="/finding/closed/" class="nav-link">
-                  <i class="nav-icon fas fa-toolbox"></i>
-                  <p>{% translate "Closed Findings" %}</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="/template/list/" class="nav-link">
-                  <i class="far fa-file-alt nav-icon"></i>
-                  <p>{% translate "Finding templates" %}</p>
-                </a>
-              </li>
+        <li class="nav-item">
+          <a href="/finding/open/" class="nav-link">
+            <i class="nav-icon fas fa-bug text-purple"></i>
+            <p>
+              {% translate "Findings" %}
+              <i class="fas fa-angle-left right"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="/finding/open/" class="nav-link">
+                <i class="nav-icon fas fa-exclamation-triangle"></i>
+                <p>{% translate "Open Findings" %}</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/finding/closed/" class="nav-link">
+                <i class="nav-icon fas fa-toolbox"></i>
+                <p>{% translate "Closed Findings" %}</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/template/list/" class="nav-link">
+                <i class="far fa-file-alt nav-icon"></i>
+                <p>{% translate "Finding templates" %}</p>
+              </a>
+            </li>
 
             {% if user.groups.all.0|stringformat:'s' == "administrator" %}
-              <li class="nav-item">
-                <a href="/template/add/" class="nav-link">
-                  <i class="fas fa-file-code nav-icon"></i>
-                  <p>{% translate "Add Finding template" %}</p>
-                </a>
-              </li>
+            <li class="nav-item">
+              <a href="/template/add/" class="nav-link">
+                <i class="fas fa-file-code nav-icon"></i>
+                <p>{% translate "Add Finding template" %}</p>
+              </a>
+            </li>
             {% endif %}
+          </ul>
+        </li>
 
-            </ul>
-          </li>
-
-          <li class="nav-item">
-            <a href="/finding/open/" class="nav-link">
-              <i class="nav-icon fas fa-fingerprint text-warning"></i>
-              <p>
-                {% translate "CWE" %}
-                <i class="fas fa-angle-left right"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="/cwe/list/" class="nav-link">
-                  <i class="nav-icon fas fa-radiation-alt"></i>
-                  <p>{% translate "CWE List" %}</p>
-                </a>
-              </li>
+        <li class="nav-item">
+          <a href="/cwe/open/" class="nav-link">
+            <i class="nav-icon fas fa-fingerprint text-warning"></i>
+            <p>
+              {% translate "CWE" %}
+              <i class="fas fa-angle-left right"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="/cwe/list/" class="nav-link">
+                <i class="nav-icon fas fa-radiation-alt"></i>
+                <p>{% translate "CWE List" %}</p>
+              </a>
+            </li>
 
             {% if user.groups.all.0|stringformat:'s' == "administrator" %}
-              <li class="nav-item">
-                <a href="/cwe/add/" class="nav-link">
-                  <i class="fas fa-edit nav-icon"></i>
-                  <p>{% translate "Add CWE" %}</p>
-                </a>
-              </li>
+            <li class="nav-item">
+              <a href="/cwe/add/" class="nav-link">
+                <i class="fas fa-edit nav-icon"></i>
+                <p>{% translate "Add CWE" %}</p>
+              </a>
+            </li>
             {% endif %}
+          </ul>
+        </li>
 
-            </ul>
-          </li>
+        <!-- Add New Menu Risk Register -->
+        <li class="nav-item">
+          <a href="/risk/risk_template_list" class="nav-link">
+            <i class="nav-icon fas fas fa-exclamation-triangle text-danger"></i>
+            <p>
+              Risk Register
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
 
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="/risk/risk_template_list" class="nav-link">
+                <i class="nav-icon fas fa-table"></i>
+                <p>All Risks</p>
+              </a>
+            </li>
+          </ul>
 
-        </ul>
-      </nav>
-    </div>
-  </aside>
+          {% if user.groups.all.0|stringformat:'s' == "administrator" %}
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="/risk/risk_template_add" class="nav-link">
+                <i class="nav-icon fas fa-edit"></i>
+                <p>Add Risk</p>
+              </a>
+            </li>
+          </ul>
+          {% endif %}
+        </li>
+
+      </ul>
+    </nav>
+  </div>
+</aside>

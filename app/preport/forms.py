@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User, Group
 from django.forms import ModelForm, Textarea, TextInput, DateField, DateInput, ModelChoiceField, CheckboxInput, CheckboxSelectMultiple, PasswordInput, EmailField, BooleanField
-from .models import DB_Report, DB_Finding, DB_Product, DB_Finding_Template, DB_Appendix, DB_CWE, DB_AttackTree, DB_Custom_field
+from .models import DB_Report, DB_Finding, DB_Product, DB_Finding_Template, DB_Appendix, DB_CWE, DB_AttackTree, DB_Custom_field, DB_Risk_Management, DB_Risk_Management_Template
 from martor.fields import MartorFormField
 from django.utils.translation import gettext_lazy as _
 
@@ -16,7 +16,7 @@ class NewProductForm(forms.ModelForm):
         fields = ('name', 'description')
 
         widgets = {
-            'name': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _('Product Name')}),
+            'name': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _('Project Name')}),
         }
 
 class ProductModelChoiceField(ModelChoiceField):
@@ -26,7 +26,7 @@ class ProductModelChoiceField(ModelChoiceField):
 
 class NewReportForm(forms.ModelForm):
 
-    product_placeholder = _('(Select a product)')
+    product_placeholder = _('(Select a project)')
 
     product = ProductModelChoiceField(queryset=DB_Product.objects.all(), empty_label=product_placeholder, widget=forms.Select(attrs={'class': 'form-control'}))
 
@@ -64,8 +64,8 @@ class NewFindingForm(forms.ModelForm):
         ('Open', _('Open')),
         ('Closed', _('Closed')),
     )
-
-    severity = forms.ChoiceField(choices=severity_choices, required=True, widget=forms.Select(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Critical/High/Medium/Low/Info/None")}))
+# , 'placeholder': _("Critical/High/Medium/Low/Info/None")
+    severity = forms.ChoiceField(choices=severity_choices, required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'type': "text", 'readonly':"", 'required': "required", 'placeholder': _("Severity Level")}))
     status = forms.ChoiceField(choices=status_choices, required=True, widget=forms.Select(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Open/Close")}))
     cwe = CWEModelChoiceField(queryset=DB_CWE.objects.all(), empty_label=_("(Select a CWE)"), widget=forms.Select(attrs={'class': 'form-control select2CWE'}))
 
@@ -75,7 +75,7 @@ class NewFindingForm(forms.ModelForm):
 
         widgets = {
             'title': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Finding title")}),
-            'cvss_base_score': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("CVSS Base Score")}),
+            'cvss_base_score': TextInput(attrs={'class': 'form-control', 'type': "text", 'readonly':"", 'required': "required", 'placeholder': _("CVSS Base Score")}),
            }
         
 
@@ -93,8 +93,8 @@ class NewFindingTemplateForm(forms.ModelForm):
     )
 
 
-
-    severity = forms.ChoiceField(choices=severity_choices, required=True, widget=forms.Select(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Critical/High/Medium/Low/Info/None")}))
+# , 'placeholder': _("Critical/High/Medium/Low/Info/None")
+    severity = forms.ChoiceField(choices=severity_choices, required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'type': "text", 'readonly':"", 'required': "required", 'placeholder': _("Severity Level")}))
     cwe = CWEModelChoiceField(queryset=DB_CWE.objects.all(), empty_label=_("(Select a CWE)"), widget=forms.Select(attrs={'class': 'form-control select2CWE'}))
 
     class Meta:
@@ -103,7 +103,7 @@ class NewFindingTemplateForm(forms.ModelForm):
 
         widgets = {
             'title': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Finding title")}),
-            'cvss_base_score': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("CVSS Base Score")}),
+            'cvss_base_score': TextInput(attrs={'class': 'form-control', 'type': "text", 'readonly':"", 'required': "required", 'placeholder': _("CVSS Base Score")}),
         }
         
 
@@ -201,4 +201,210 @@ class NewFieldForm(forms.ModelForm):
 
         widgets = {
             'title': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Title")}),
+        }
+
+
+class NewRiskForm(forms.ModelForm):
+
+    inherent_probability_choice = (
+        ('', _('(Select Inherent Risk Probability)')),
+        ('Very High', _('Very High')),
+        ('High', _('High')),
+        ('Medium', _('Medium')),
+        ('Low', _('Low')),
+        ('Very Low', _('Very Low')),
+    )
+
+    inherent_severity_choice = (
+        ('', _('(Select Inherent Risk Severity)')),
+        ('Very High', _('Very High')),
+        ('High', _('High')),
+        ('Medium', _('Medium')),
+        ('Low', _('Low')),
+        ('Very Low', _('Very Low')),
+    )
+
+    inherent_value_choice = (
+        ('', _('(Select Inherent Risk Value)')),
+        ('Very High', _('Very High')),
+        ('High', _('High')),
+        ('Medium', _('Medium')),
+        ('Low', _('Low')),
+        ('Very Low', _('Very Low')),
+    )
+
+    type_of_risk_choice = (
+        ('', _('(Select Type of Risk)')),
+        ('Operation', _('Operation')),
+        ('Compliance', _('Compliance')),
+        ('Strategic', _('Strategic')),
+        ('Reputation', _('Reputation')),
+    )
+
+    risk_handling_choice = (
+        ('', _('(Select Risk Handling)')),
+        ('Avoid', _('Avoid')),
+        ('Transfer', _('Transfer')),
+        ('Accept', _('Accept')),
+        ('Control', _('Control')),
+    )
+
+    residual_probability_choice = (
+        ('', _('(Select Residual Probability)')),
+        ('Very High', _('Very High')),
+        ('High', _('High')),
+        ('Medium', _('Medium')),
+        ('Low', _('Low')),
+        ('Very Low', _('Very Low')),
+    )
+
+    residual_severity_choice = (
+        ('', _('(Select Residual Severity)')),
+        ('Very High', _('Very High')),
+        ('High', _('High')),
+        ('Medium', _('Medium')),
+        ('Low', _('Low')),
+        ('Very Low', _('Very Low')),
+    )
+
+    residual_value_choice = (
+        ('', _('(Select Residual Value)')),
+        ('Very High', _('Very High')),
+        ('High', _('High')),
+        ('Medium', _('Medium')),
+        ('Low', _('Low')),
+        ('Very Low', _('Very Low')),
+    )
+
+    status_choices = (
+        ('', _('(Select status)')),
+        ('Open', _('Open')),
+        ('Closed', _('Closed')),
+    )
+
+    inherent_risk_probability = forms.ChoiceField(choices=inherent_probability_choice, required=True, widget=forms.Select(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Very High/High/Medium/Low/Very Low")}))
+    inherent_risk_severity = forms.ChoiceField(choices=inherent_severity_choice, required=True, widget=forms.Select(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Very High/High/Medium/Low/Very Low")}))
+    inherent_risk_value = forms.ChoiceField(choices=inherent_value_choice, required=True, widget=forms.Select(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Very High/High/Medium/Low/Very Low")}))
+    type_of_risk = forms.ChoiceField(choices=type_of_risk_choice, required=True, widget=forms.Select(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Operation/Compliance/Strategic/Reputation")}))
+    risk_handling = forms.ChoiceField(choices=risk_handling_choice, required=True, widget=forms.Select(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Control/Avoid/Transfer/Accept")}))
+    residual_risk_probability = forms.ChoiceField(choices=residual_probability_choice, required=True, widget=forms.Select(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Very High/High/Medium/Low/Very Low")}))
+    residual_risk_severity = forms.ChoiceField(choices=residual_severity_choice, required=True, widget=forms.Select(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Very High/High/Medium/Low/Very Low")}))
+    residual_risk_value = forms.ChoiceField(choices=residual_value_choice, required=True, widget=forms.Select(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Very High/High/Medium/Low/Very Low")}))
+    status = forms.ChoiceField(choices=status_choices, required=True, widget=forms.Select(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Open/Close")}))
+
+    class Meta:
+        model = DB_Risk_Management
+        fields = ('risk_number', 'risk_owner', 'process_service_name', 'asset_category', 'asset_name', 'threat', 'vulnerability', 'impact_component', 'current_control', 'inherent_risk_probability', 'inherent_risk_severity', 'inherent_risk_value', 'type_of_risk', 'risk_handling', 'risk_treatment_plan', 'residual_risk_probability', 'residual_risk_severity', 'residual_risk_value', 'reference', 'target_date', 'status')
+
+        widgets = {
+            'risk_number': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Risk Number")}),
+            'risk_owner': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Risk Owner")}),
+            'process_service_name': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Process Service Name")}),
+            'asset_category': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Asset Category")}),
+            'asset_name': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Asset Name")}),
+            'target_date': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Target Date")}),
+
+        }
+
+
+class NewRiskTemplateForm(forms.ModelForm):
+
+    inherent_probability_choice = (
+        ('', _('(Select Inherent Risk Probability)')),
+        ('Very High', _('Very High')),
+        ('High', _('High')),
+        ('Medium', _('Medium')),
+        ('Low', _('Low')),
+        ('Very Low', _('Very Low')),
+    )
+
+    inherent_severity_choice = (
+        ('', _('(Select Inherent Risk Severity)')),
+        ('Very High', _('Very High')),
+        ('High', _('High')),
+        ('Medium', _('Medium')),
+        ('Low', _('Low')),
+        ('Very Low', _('Very Low')),
+    )
+
+    inherent_value_choice = (
+        ('', _('(Select Inherent Risk Value)')),
+        ('Very High', _('Very High')),
+        ('High', _('High')),
+        ('Medium', _('Medium')),
+        ('Low', _('Low')),
+        ('Very Low', _('Very Low')),
+    )
+
+    type_of_risk_choice = (
+        ('', _('(Select Type of Risk)')),
+        ('Operation', _('Operation')),
+        ('Compliance', _('Compliance')),
+        ('Strategic', _('Strategic')),
+        ('Reputation', _('Reputation')),
+    )
+
+    risk_handling_choice = (
+        ('', _('(Select Risk Handling)')),
+        ('Avoid', _('Avoid')),
+        ('Transfer', _('Transfer')),
+        ('Accept', _('Accept')),
+        ('Control', _('Control')),
+    )
+
+    residual_probability_choice = (
+        ('', _('(Select Residual Probability)')),
+        ('Very High', _('Very High')),
+        ('High', _('High')),
+        ('Medium', _('Medium')),
+        ('Low', _('Low')),
+        ('Very Low', _('Very Low')),
+    )
+
+    residual_severity_choice = (
+        ('', _('(Select Residual Severity)')),
+        ('Very High', _('Very High')),
+        ('High', _('High')),
+        ('Medium', _('Medium')),
+        ('Low', _('Low')),
+        ('Very Low', _('Very Low')),
+    )
+
+    residual_value_choice = (
+        ('', _('(Select Residual Value)')),
+        ('Very High', _('Very High')),
+        ('High', _('High')),
+        ('Medium', _('Medium')),
+        ('Low', _('Low')),
+        ('Very Low', _('Very Low')),
+    )
+
+    status_choices = (
+        ('', _('(Select status)')),
+        ('Open', _('Open')),
+        ('Closed', _('Closed')),
+    )
+
+    inherent_risk_probability = forms.ChoiceField(choices=inherent_probability_choice, required=True, widget=forms.Select(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Very High/High/Medium/Low/Very Low")}))
+    inherent_risk_severity = forms.ChoiceField(choices=inherent_severity_choice, required=True, widget=forms.Select(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Very High/High/Medium/Low/Very Low")}))
+    inherent_risk_value = forms.ChoiceField(choices=inherent_value_choice, required=True, widget=forms.Select(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Very High/High/Medium/Low/Very Low")}))
+    type_of_risk = forms.ChoiceField(choices=type_of_risk_choice, required=True, widget=forms.Select(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Operation/Compliance/Strategic/Reputation")}))
+    risk_handling = forms.ChoiceField(choices=risk_handling_choice, required=True, widget=forms.Select(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Control/Avoid/Transfer/Accept")}))
+    residual_risk_probability = forms.ChoiceField(choices=residual_probability_choice, required=True, widget=forms.Select(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Very High/High/Medium/Low/Very Low")}))
+    residual_risk_severity = forms.ChoiceField(choices=residual_severity_choice, required=True, widget=forms.Select(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Very High/High/Medium/Low/Very Low")}))
+    residual_risk_value = forms.ChoiceField(choices=residual_value_choice, required=True, widget=forms.Select(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Very High/High/Medium/Low/Very Low")}))
+    status = forms.ChoiceField(choices=status_choices, required=True, widget=forms.Select(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Open/Close")}))
+
+    class Meta:
+        model = DB_Risk_Management_Template
+        fields = ('risk_number', 'risk_owner', 'process_service_name', 'asset_category', 'asset_name', 'threat', 'vulnerability', 'impact_component', 'current_control', 'inherent_risk_probability', 'inherent_risk_severity', 'inherent_risk_value', 'type_of_risk', 'risk_handling', 'risk_treatment_plan', 'residual_risk_probability', 'residual_risk_severity', 'residual_risk_value', 'reference', 'target_date', 'status')
+
+        widgets = {
+            'risk_number': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Risk Number")}),
+            'risk_owner': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Risk Owner")}),
+            'process_service_name': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Process Service Name")}),
+            'asset_category': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Asset Category")}),
+            'asset_name': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Asset Name")}),
+            'target_date': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Target Date")}),
+            
         }

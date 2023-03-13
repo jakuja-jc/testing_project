@@ -15,10 +15,10 @@ from django.views.decorators.csrf import csrf_protect
 from django.utils.translation import gettext_lazy as _
 
 # Forms
-from .forms import NewProductForm, NewReportForm, NewFindingForm, NewAppendixForm, NewFindingTemplateForm, AddUserForm, NewCWEForm, NewFieldForm
+from .forms import NewProductForm, NewReportForm, NewFindingForm, NewAppendixForm, NewFindingTemplateForm, AddUserForm, NewCWEForm, NewFieldForm, NewRiskForm, NewRiskTemplateForm
 
 # Model
-from .models import DB_Report, DB_Finding, DB_Product, DB_Finding_Template, DB_Appendix, DB_CWE, DB_Custom_field, DB_AttackFlow
+from .models import DB_Report, DB_Finding, DB_Product, DB_Finding_Template, DB_Appendix, DB_CWE, DB_Custom_field, DB_AttackFlow, DB_Risk_Management, DB_Risk_Management_Template
 
 # Decorators
 from .decorators import allowed_users
@@ -1887,3 +1887,100 @@ def attackflow_delete(request):
     else:
         return HttpResponseServerError('{"status":"fail"}', content_type='application/json')
 
+
+# ----------------------------------------------------------------------
+#                           Risk Management Template
+# ----------------------------------------------------------------------
+
+
+@login_required
+def risk_list_template(request):
+
+    DB_risk_query = DB_Risk_Management_Template.objects.order_by('risk_number')
+    # DB_risk_query = DB_Risk_Management_Template.objects.order_by('pk').all()
+
+
+    return render(request, 'risk/risk_template_list.html', {'DB_risk_query': DB_risk_query})
+
+
+@login_required
+@allowed_users(allowed_roles=['administrator'])
+def risk_add_template(request):
+
+    if request.method == 'POST':
+        form = NewRiskTemplateForm(request.POST)
+        if form.is_valid():
+            risk_template = form.save(commit=False)            
+            risk_template.risk_id = uuid.uuid4()
+            risk_template.save()
+
+            if '_finish' in request.POST:
+                return redirect('risk_list_template')
+            elif '_next' in request.POST:
+                return redirect('risk_add_template')
+
+    else:
+        form = NewRiskTemplateForm()
+        form.fields['threat'].initial = PETEREPORT_TEMPLATES['initial_text']
+        form.fields['vulnerability'].initial = PETEREPORT_TEMPLATES['initial_text']
+        form.fields['impact_component'].initial = PETEREPORT_TEMPLATES['initial_text']
+        form.fields['current_control'].initial = PETEREPORT_TEMPLATES['initial_text']
+        form.fields['risk_treatment_plan'].initial = PETEREPORT_TEMPLATES['initial_text']
+        form.fields['reference'].initial = PETEREPORT_TEMPLATES['initial_text']
+        
+
+    return render(request, 'risk/risk_template_add.html', {
+        'form': form})
+
+# @login_required
+# @allowed_users(allowed_roles=['administrator'])
+# def risk_edit(request,pk):
+
+#     risk = get_object_or_404(DB_Risk_Management_Template, pk=pk)
+#     report = risk.report
+#     DB_report_query = get_object_or_404(DB_Report, pk=report.pk)
+
+#     if request.method == 'POST':
+#         form = NewRiskForm(request.POST, instance=risk)
+#         if form.is_valid():
+#             risk = form.save(commit=False)
+#             risk.save()
+
+#             if '_finish' in request.POST:
+#                 return redirect('reportrisk', pk=report.pk)
+#             elif '_next' in request.POST:
+#                 return redirect('risk_add', pk=report.pk)
+
+#     else:
+#         form = NewRiskForm(instance=risk)
+#     return render(request, 'risk/risk_add.html', {
+#         'form': form, 'DB_report': DB_report_query
+#     })
+
+
+
+
+# @login_required
+# @allowed_users(allowed_roles=['administrator'])
+# def risk_delete(request):
+
+#     if request.method == 'POST':
+#         delete_id = request.POST['delete_id']
+#         DB_Risk_Management.objects.filter(pk=delete_id).delete()
+
+#         return HttpResponse('{"status":"success"}', content_type='application/json')
+#     else:
+#         return HttpResponseServerError('{"status":"fail"}', content_type='application/json')
+
+
+
+# @login_required
+# def risk_view(request,pk):
+#     risk = get_object_or_404(DB_Risk_Management, pk=pk)
+#     # DB_finding_query = DB_Finding.objects.filter(pk=pk).order_by('cvss_score').reverse()
+#     # DB_appendix = DB_Appendix.objects.filter(finding__in=DB_finding_query)
+#     # DB_attackflow = DB_AttackFlow.objects.filter(finding__in=DB_finding_query)
+#     # DB_field = DB_Custom_field.objects.filter(finding__in=DB_finding_query)
+
+#     # return render(request, 'findings/finding_view.html', {'DB_report': finding.report, 'finding': finding, 'DB_appendix': DB_appendix, 'DB_attackflow': DB_attackflow, 'DB_field': DB_field})
+#     return render(request, 'risk/risk_view.html', {'risk': risk})

@@ -35395,7 +35395,7 @@ a.close.disabled, a.disabled.mailbox-attachment-close {
 
 .login-logo,
 .register-logo {
-  font-size: 2.1rem;
+  font-size: 1.8rem;
   font-weight: 300;
   margin-bottom: .9rem;
   text-align: center;
@@ -35426,7 +35426,7 @@ a.close.disabled, a.disabled.mailbox-attachment-close {
 
 .login-box,
 .register-box {
-  width: 360px;
+  width: 410px;
 }
 
 @media (max-width: 576px) {

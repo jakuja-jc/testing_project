@@ -10,7 +10,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "petereport.settings")
 django.setup()
 
 from petereport.settings import MEDIA_ROOT, REPORTS_MEDIA_ROOT
-from preport.models import DB_Product, DB_Report, DB_Finding, DB_Appendix, DB_Finding_Template, DB_Appendix, DB_CWE
+from preport.models import DB_Product, DB_Report, DB_Finding, DB_Appendix, DB_Finding_Template, DB_Appendix, DB_CWE, DB_Risk_Management, DB_Risk_Management_Template
 
 def remove_folder(path):
     # check if folder exists
@@ -71,6 +71,9 @@ def main():
         DB_Finding_Template.objects.all().delete()
         DB_Appendix.objects.all().delete()
         DB_CWE.objects.all().delete()
+        DB_Risk_Management.objects.all().delete()
+        DB_Risk_Management_Template.objects.all().delete()
+
 
         remove_folder(MEDIA_ROOT)
         create_media_folders(MEDIA_ROOT)

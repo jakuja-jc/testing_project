@@ -24,7 +24,8 @@
           <div class="small-box bg-info">
             <div class="inner">
               <h3>{{total_products}}</h3> 
-              <p>{% translate "Product" %}{{ total_products|pluralize:"s" }}</p>
+              <!-- <p>{% translate "Product" %}{{ total_products|pluralize:"s" }}</p> -->
+              <p>Project{{ total_products|pluralize:"s" }}</p>
             </div>
             <div class="icon">
               <i class="fas fa-cube"></i>
@@ -121,7 +122,8 @@
             <table class="table">
                   <thead>
                     <tr>
-                      <th class="text-center" style="width: 10%">{% translate "Product" %}</th>
+                      <!-- <th class="text-center" style="width: 10%">{% translate "Product" %}</th> -->
+                      <th class="text-center" style="width: 10%">Project</th>
                       <th class="text-center" style="width: 25%">{% translate "Report" %}</th>
                       <th class="text-center" style="width: 40%">{% translate "Finding" %}</th>
                       <th class="text-center" style="width: 10%">{% translate "CWE" %}</th>

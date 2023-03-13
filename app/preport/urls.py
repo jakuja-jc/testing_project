@@ -74,4 +74,11 @@ urlpatterns = [
     path('attackflow/add_afb/<int:pk>/<int:finding_pk>', views.attackflow_add_afb, name='attackflow_add_afb'),
     path('attackflow/edit_afb/<int:pk>', views.attackflow_edit_afb, name='attackflow_edit_afb'),
     path('attackflow/delete/', views.attackflow_delete, name='attackflow_delete'),
+
+    # Risk Template
+    path('risk/risk_template_list/', views.risk_list_template, name='risk_list_template'),
+    path('risk/risk_template_add/', views.risk_add_template, name='risk_add_template'),
+    # path('risk/templateedit/<int:pk>', views.risk_edit, name='risk_edit'),
+    # path('risk/templatedelete/', views.risk_delete, name='risk_delete'),
+    # path('risk/templateview/<int:pk>', views.risk_view, name='risk_view'),
 ]
