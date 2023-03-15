@@ -20,28 +20,28 @@ def createAdminUser():
     except DjangoError:
         pass
 
-    try:
-        user_administrator = User.objects.create_superuser(
-            username = PETEREPORT_CONFIG['admin_username'],
-            password = PETEREPORT_CONFIG['admin_password'],
-            email = PETEREPORT_CONFIG['admin_email']
-        )
-        user_administrator.groups.add(group_administrator)
-        user_administrator.save()
+#    try:
+#        user_administrator = User.objects.create_superuser(
+#            username = PETEREPORT_CONFIG['admin_username'],
+#            password = PETEREPORT_CONFIG['admin_password'],
+#            email = PETEREPORT_CONFIG['admin_email']
+#        )
+#        user_administrator.groups.add(group_administrator)
+#        user_administrator.save()
 
-    except DjangoError:
-        pass
+#    except DjangoError:
+#        pass
 
-    try:
-        user_viewer = User.objects.create_user(
-            username = PETEREPORT_CONFIG['viewer_username'],
-            password = PETEREPORT_CONFIG['viewer_password'],
-            email = PETEREPORT_CONFIG['viewer_email']
-        )
+#    try:
+#        user_viewer = User.objects.create_user(
+#            username = PETEREPORT_CONFIG['viewer_username'],
+#            password = PETEREPORT_CONFIG['viewer_password'],
+#            email = PETEREPORT_CONFIG['viewer_email']
+#        )
 
-        user_viewer.groups.add(group_viewer)
-        user_viewer.save()
+#        user_viewer.groups.add(group_viewer)
+#        user_viewer.save()
 
-    except DjangoError:
-        pass
+#    except DjangoError:
+#        pass
 

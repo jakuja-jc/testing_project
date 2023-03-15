@@ -441,6 +441,7 @@ def report_edit(request,pk):
 @login_required
 def report_view(request,pk):
     DB_report_query = get_object_or_404(DB_Report, pk=pk)
+    
     DB_finding_query = DB_Finding.objects.filter(report=DB_report_query).order_by('cvss_score').reverse()
     count_finding_query = DB_finding_query.count()
 
@@ -449,6 +450,9 @@ def report_view(request,pk):
 
     DB_attackflow_query = DB_AttackFlow.objects.filter(finding__in=DB_finding_query)
     count_attackflow_query = DB_attackflow_query.count()
+
+    DB_risk_query = DB_Risk_Management.objects.filter(report=DB_report_query).order_by('risk_number').reverse()
+    count_risk_query = DB_risk_query.count()
 
     count_findings_critical = 0
     count_findings_high = 0
@@ -493,7 +497,24 @@ def report_view(request,pk):
         cwe_categories.append(dict_cwe)
 
 
-    return render(request, 'reports/report_view.html', {'DB_appendix_query': DB_appendix_query, 'DB_report_query': DB_report_query, 'DB_finding_query': DB_finding_query, 'count_appendix_query': count_appendix_query, 'count_finding_query': count_finding_query, 'count_findings_critical': count_findings_critical, 'count_findings_high': count_findings_high, 'count_findings_medium': count_findings_medium, 'count_findings_low': count_findings_low, 'count_findings_info': count_findings_info, 'count_findings_none': count_findings_none, 'cwe_categories': cwe_categories, 'DB_attackflow_query': DB_attackflow_query, 'count_attackflow_query': count_attackflow_query})
+    return render(request, 'reports/report_view.html', {
+        'DB_appendix_query': DB_appendix_query, 
+        'DB_report_query': DB_report_query, 
+        'DB_finding_query': DB_finding_query, 
+        'count_appendix_query': count_appendix_query, 
+        'count_finding_query': count_finding_query, 
+        'count_findings_critical': count_findings_critical, 
+        'count_findings_high': count_findings_high, 
+        'count_findings_medium': count_findings_medium, 
+        'count_findings_low': count_findings_low, 
+        'count_findings_info': count_findings_info, 
+        'count_findings_none': count_findings_none, 
+        'cwe_categories': cwe_categories, 
+        'DB_attackflow_query': DB_attackflow_query, 
+        'count_attackflow_query': count_attackflow_query, 
+        'DB_risk_query': DB_risk_query, 
+        'count_risk_query': count_risk_query
+        })
 
 
 
@@ -1932,55 +1953,202 @@ def risk_add_template(request):
     return render(request, 'risk/risk_template_add.html', {
         'form': form})
 
-# @login_required
-# @allowed_users(allowed_roles=['administrator'])
-# def risk_edit(request,pk):
 
-#     risk = get_object_or_404(DB_Risk_Management_Template, pk=pk)
-#     report = risk.report
-#     DB_report_query = get_object_or_404(DB_Report, pk=report.pk)
+@login_required
+def risk_view_template(request,pk):
+    DB_risk_query = get_object_or_404(DB_Risk_Management_Template, pk=pk)
 
-#     if request.method == 'POST':
-#         form = NewRiskForm(request.POST, instance=risk)
-#         if form.is_valid():
-#             risk = form.save(commit=False)
-#             risk.save()
-
-#             if '_finish' in request.POST:
-#                 return redirect('reportrisk', pk=report.pk)
-#             elif '_next' in request.POST:
-#                 return redirect('risk_add', pk=report.pk)
-
-#     else:
-#         form = NewRiskForm(instance=risk)
-#     return render(request, 'risk/risk_add.html', {
-#         'form': form, 'DB_report': DB_report_query
-#     })
+    return render(request, 'risk/risk_template_view.html', {'DB_risk_query': DB_risk_query})
 
 
+@login_required
+@allowed_users(allowed_roles=['administrator'])
+def risk_edit_template(request, pk):
+
+    risk_template_edit = get_object_or_404(DB_Risk_Management_Template, pk=pk)
+
+    if request.method == 'POST':
+        form = NewRiskTemplateForm(request.POST, instance=risk_template_edit)
+        if form.is_valid():
+            risk_template_edit = form.save(commit=False)
+            risk_template_edit.save()
+
+            if '_finish' in request.POST:
+                return redirect('risk_list_template')
+            elif '_next' in request.POST:
+                return redirect('risk_add_template')
+    else:
+        form = NewRiskTemplateForm(instance=risk_template_edit)
+
+    return render(request, 'risk/risk_template_add.html', {
+        'form': form
+    })
 
 
-# @login_required
-# @allowed_users(allowed_roles=['administrator'])
-# def risk_delete(request):
+@login_required
+@allowed_users(allowed_roles=['administrator'])
+def risk_delete_template(request):
 
-#     if request.method == 'POST':
-#         delete_id = request.POST['delete_id']
-#         DB_Risk_Management.objects.filter(pk=delete_id).delete()
+    if request.method == 'POST':
+        delete_id = request.POST['delete_id']
+        DB_Risk_Management_Template.objects.filter(pk=delete_id).delete()
 
-#         return HttpResponse('{"status":"success"}', content_type='application/json')
-#     else:
-#         return HttpResponseServerError('{"status":"fail"}', content_type='application/json')
+        return HttpResponse('{"status":"success"}', content_type='application/json')
+    else:
+        return HttpResponseServerError('{"status":"fail"}', content_type='application/json')
+
+@login_required
+@allowed_users(allowed_roles=['administrator'])
+def risk_add_from_template(request,pk):
+
+    DB_report_query = get_object_or_404(DB_Report, pk=pk)
+    DB_risk_query = DB_Risk_Management_Template.objects.order_by('risk_number')
+
+    return render(request, 'risk/risk_add_from_template.html', {'DB_risk_query': DB_risk_query, 'DB_report_query': DB_report_query})
 
 
+@login_required
+@allowed_users(allowed_roles=['administrator'])
+def risk_add_to_report(request,pk,reportpk):
 
-# @login_required
-# def risk_view(request,pk):
-#     risk = get_object_or_404(DB_Risk_Management, pk=pk)
-#     # DB_finding_query = DB_Finding.objects.filter(pk=pk).order_by('cvss_score').reverse()
-#     # DB_appendix = DB_Appendix.objects.filter(finding__in=DB_finding_query)
-#     # DB_attackflow = DB_AttackFlow.objects.filter(finding__in=DB_finding_query)
-#     # DB_field = DB_Custom_field.objects.filter(finding__in=DB_finding_query)
+    DB_report_query = get_object_or_404(DB_Report, pk=reportpk)
+    DB_risk_add_query = get_object_or_404(DB_Risk_Management_Template, pk=pk)
 
-#     # return render(request, 'findings/finding_view.html', {'DB_report': finding.report, 'finding': finding, 'DB_appendix': DB_appendix, 'DB_attackflow': DB_attackflow, 'DB_field': DB_field})
-#     return render(request, 'risk/risk_view.html', {'risk': risk})
+    # save risk in DB
+    risk_uuid = uuid.uuid4()
+    # risk_status = "Open"
+    risk_to_DB = DB_Risk_Management(
+        report =DB_report_query, 
+        risk_id =risk_uuid, 
+        risk_number =DB_risk_add_query.risk_number, 
+        risk_owner =DB_risk_add_query.risk_owner, 
+        process_service_name =DB_risk_add_query.process_service_name, 
+        asset_category =DB_risk_add_query.asset_category, 
+        asset_name =DB_risk_add_query.asset_name, 
+        threat =DB_risk_add_query.threat, 
+        vulnerability =DB_risk_add_query.vulnerability, 
+        impact_component =DB_risk_add_query.impact_component, 
+        current_control =DB_risk_add_query.current_control, 
+        inherent_risk_probability =DB_risk_add_query.inherent_risk_probability, 
+        inherent_risk_severity =DB_risk_add_query.inherent_risk_severity,
+        inherent_risk_value =DB_risk_add_query.inherent_risk_value,
+        type_of_risk =DB_risk_add_query.type_of_risk,
+        risk_handling =DB_risk_add_query.risk_handling,
+        risk_treatment_plan =DB_risk_add_query.risk_treatment_plan, 
+        residual_risk_probability =DB_risk_add_query.residual_risk_probability,
+        residual_risk_severity =DB_risk_add_query.residual_risk_severity,
+        residual_risk_value =DB_risk_add_query.residual_risk_value,
+        reference =DB_risk_add_query.reference,
+        target_date =DB_risk_add_query.target_date,
+        status =DB_risk_add_query.status
+        )
+    risk_to_DB.save()
+
+    return redirect('report_view', pk=reportpk)
+
+
+# ----------------------------------------------------------------------
+#                           Risk
+# ----------------------------------------------------------------------
+
+
+@login_required
+def report_risk(request,pk):
+    DB_report_query = get_object_or_404(DB_Report, pk=pk)
+    DB_risk_query = DB_Risk_Management.objects.filter(report=DB_report_query).order_by('risk_number').reverse()
+    count_risk_query = DB_risk_query.count()
+
+    return render(request, 'risk/report_risk.html', {'DB_report_query': DB_report_query, 'DB_risk_query': DB_risk_query, 'count_risk_query': count_risk_query})
+
+
+@login_required
+@allowed_users(allowed_roles=['administrator'])
+def risk_delete(request):
+
+    if request.method == 'POST':
+        delete_id = request.POST['delete_id']
+        DB_Risk_Management.objects.filter(pk=delete_id).delete()
+
+        return HttpResponse('{"status":"success"}', content_type='application/json')
+    else:
+        return HttpResponseServerError('{"status":"fail"}', content_type='application/json')
+
+@login_required
+def risk_view(request,pk):
+    risk = get_object_or_404(DB_Risk_Management, pk=pk)
+    DB_risk_query = DB_Risk_Management.objects.filter(pk=pk).order_by('risk_number').reverse()
+
+    return render(request, 'risk/risk_view.html', {'DB_report': risk.report, 'risk': risk, 'DB_risk_query' : DB_risk_query})
+
+@login_required
+@allowed_users(allowed_roles=['administrator'])
+def risk_edit(request,pk):
+
+    risk = get_object_or_404(DB_Risk_Management, pk=pk)
+    report = risk.report
+    DB_report_query = get_object_or_404(DB_Report, pk=report.pk)
+
+    if request.method == 'POST':
+        form = NewRiskForm(request.POST, instance=risk)
+        if form.is_valid():
+            risk = form.save(commit=False)
+            risk.save()
+
+            if '_finish' in request.POST:
+                return redirect('report_risk', pk=report.pk)
+            elif '_next' in request.POST:
+                return redirect('risk_add', pk=report.pk)
+
+    else:
+        form = NewRiskForm(instance=risk)
+    return render(request, 'risk/risk_add.html', {
+        'form': form, 'DB_report_query': DB_report_query
+    })
+
+@login_required
+@allowed_users(allowed_roles=['administrator'])
+def risk_add(request,pk):
+
+    DB_report_query = get_object_or_404(DB_Report, pk=pk)
+
+    if request.method == 'POST':
+        form = NewRiskForm(request.POST)
+        
+        if form.is_valid():
+            risk = form.save(commit=False)            
+            risk.report = DB_report_query
+            risk.risk_id = uuid.uuid4()
+            risk.save()
+
+            if '_finish' in request.POST:
+                return redirect('report_risk', pk=pk)
+            elif '_next' in request.POST:
+                return redirect('risk_add', pk=pk)
+
+    else:
+        form = NewRiskForm()
+        # form.fields['risk_id'].initial = PETEREPORT_TEMPLATES['initial_text']
+        form.fields['risk_number'].initial = PETEREPORT_TEMPLATES['initial_text']
+        form.fields['risk_owner'].initial = PETEREPORT_TEMPLATES['initial_text']
+        form.fields['process_service_name'].initial = PETEREPORT_TEMPLATES['initial_text']
+        form.fields['asset_category'].initial = PETEREPORT_TEMPLATES['initial_text']
+        form.fields['asset_name'].initial = PETEREPORT_TEMPLATES['initial_text']
+        form.fields['threat'].initial = PETEREPORT_TEMPLATES['initial_text']
+        form.fields['vulnerability'].initial = PETEREPORT_TEMPLATES['initial_text']
+        form.fields['impact_component'].initial = PETEREPORT_TEMPLATES['initial_text']
+        form.fields['current_control'].initial = PETEREPORT_TEMPLATES['initial_text']
+        form.fields['inherent_risk_probability'].initial = PETEREPORT_TEMPLATES['initial_text']
+        form.fields['inherent_risk_severity'].initial = PETEREPORT_TEMPLATES['initial_text']
+        form.fields['inherent_risk_value'].initial = PETEREPORT_TEMPLATES['initial_text']
+        form.fields['type_of_risk'].initial = PETEREPORT_TEMPLATES['initial_text']
+        form.fields['risk_handling'].initial = PETEREPORT_TEMPLATES['initial_text']
+        form.fields['risk_treatment_plan'].initial = PETEREPORT_TEMPLATES['initial_text']
+        form.fields['residual_risk_probability'].initial = PETEREPORT_TEMPLATES['initial_text']
+        form.fields['residual_risk_severity'].initial = PETEREPORT_TEMPLATES['initial_text']
+        form.fields['residual_risk_value'].initial = PETEREPORT_TEMPLATES['initial_text']
+        form.fields['reference'].initial = PETEREPORT_TEMPLATES['initial_text']
+        form.fields['target_date'].initial = PETEREPORT_TEMPLATES['initial_text']
+        form.fields['status'].initial = PETEREPORT_TEMPLATES['initial_text']
+
+    return render(request, 'risk/risk_add.html', {
+        'form': form, 'DB_report': DB_report_query})

@@ -34,16 +34,18 @@
 
         <div class="row">
             <div class="col-md-5">
-              <a href="/report/findings/{{ DB_report_query.pk }}"><button type="button" class="btn btn-danger"><i class="fa fa-bug"></i> {% translate "Findings" %}</button></a>
+              <a href="/report/findings/{{ DB_report_query.pk }}"><button type="button" class="btn btn-info"><i class="fa fa-bug"></i> {% translate "Findings" %}</button></a>
               <a href="/report/appendix/{{ DB_report_query.pk }}"><button type="button" class="btn btn-success"><i class="fa fa-folder"></i> {% translate "Appendix" %}</button></a>
               <a href="/report/attackflow/{{ DB_report_query.pk }}"><button type="button" class="btn btn-warning"><i class="fa fa-sitemap"></i> {% translate "Attack Flows" %}</button></a>
+              <a href="/report/risk/{{ DB_report_query.pk }}"><button type="button" class="btn btn-danger"><i class="fa fa-exclamation-triangle"></i> {% translate "Risk Management" %}</button></a>
+
 
             </div>
 
             <div class="col-md-7 text-right">
-              <a>Report as : </a>
+              <a>Export as : </a>
               <!-- <button type="button" onclick="SaveSummaryImage('Markdown');" class="btn btn-info"><i class="fa fa-download"></i> {% translate "Markdown" %}</button> -->
-              <button type="button" onclick="SaveSummaryImage('PDF');" class="btn btn-warning"><i class="fa fa-download"></i> {% translate "PDF" %}</button>
+              <button type="button" onclick="SaveSummaryImage('PDF');" class="btn btn-success"><i class="fa fa-download"></i> {% translate "PDF" %}</button>
               <!-- <a href="/report/download/html/{{ DB_report_query.pk }}"><button type="button" class="btn btn-primary"><i class="fa fa-download"></i> {% translate "HTML" %}</button></a> -->
               <!-- <a href="/finding/csv/{{ DB_report_query.pk }}"><button type="button" class="btn btn-success"><i class="fa fa-download"></i> {% translate "CSV" %}</button></a> -->
               <!-- <a href="/report/download/jupyter/{{ DB_report_query.pk }}"><button type="button" class="btn btn-secondary"><i class="fa fa-download"></i> {% translate "Jupyter" %}</button></a> -->
@@ -499,7 +501,102 @@
         </div>
       </div> 
 
+<!-- ADD RISK -->
+      <div class="row">
+        <div class="col-md-12">
 
+            <div class="card card-outline card-danger">
+                <div class="card-header">
+                  <h3 class="card-title">
+                    <b>{{ count_risk_query }} {% translate "Risk" %}{{ count_risk_query|pluralize:"s" }}</b>
+                  </h3>
+                  <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                      <i class="fas fa-minus"></i>
+                    </button>
+                  </div>
+
+                </div>
+                <div class="card-body">
+                    
+                    <div class="row">
+                      <div class="col-md-12">
+
+                      {% if count_risk_query == 0 %}
+
+                        <a href="/risk/add/{{ DB_report_query.pk }}"><button type="button" class="btn btn-success btn-xm" data-toggle="modal">{% translate "Add Risk" %}</button></a>
+
+                      {% else %}
+
+                        <table id="risklist" class="table table-bordered table-hover"> 
+
+                        <thead>
+                          <tr>
+                            <th style="width: 40%">{% translate "Risk Number" %}</th>
+                            <th style="width: 5%">{% translate "Risk Owner" %}</th>
+                            <th style="width: 10%">{% translate "Process/Service Name" %}</th>
+                            <th style="width: 5%">{% translate "Asset Name" %}</th>
+                            <th style="width: 20%"class="text-center">{% translate "Actions" %}</th>
+                          </tr>
+                        </thead>
+
+                        <tbody>
+                          {% for risk in DB_risk_query %}
+                          <tr>
+                                  <td>{{ risk.risk_number }} </td>
+                                  <td>{{ risk.risk_owner }} </td>
+                                  <td>{{ risk.asset_category }}</td>
+                                  <td>{{ risk.asset_name }}</td>
+                                  <td align="center">
+                                      <a href="/risk/view/{{ risk.pk }}"><button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target=".bs-example-modal-sm"><i class="fa fa-folder"></i> {% translate "View" %}</button></a>
+                                      {% if user.groups.all.0|stringformat:'s' == "administrator" %}
+                                        <a href="/risk/edit/{{ risk.pk }}"><button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target=".bs-example-modal-sm"><i class="fa fa-edit"></i> {% translate "Edit" %}</button></a> 
+                                        <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target=".mm-modal-{{risk.pk}}"><i class="fas fa-trash"></i> {% translate "Delete" %}</button>
+                                      {% endif %}
+
+                                  </td>
+
+                          </tr>
+
+                          <div class="modal modal-danger fade mm-modal-{{risk.pk}}" id="modal-danger">
+                            <div class="modal-dialog">
+                              <div class="modal-content bg-danger">
+                                <div class="modal-header">
+                                  <h4 class="modal-title">{% translate "Are you sure?" %}</h4>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                </div>
+                                <div class="modal-body">
+                                  <p>{% translate "Delete Risk" %}&hellip;</p>
+                                </div>
+                                <div class="modal-footer justify-content-between">
+                                  <button type="button" class="btn btn-outline-light" data-dismiss="modal">{% translate "Close" %}</button>
+                                  <button type="button" onclick="DeleteID_R({{risk.pk}});" class="btn btn-outline-light">{% translate "Delete Risk" %}</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+
+                          {% endfor %}
+
+                        </tbody>
+                      </table>
+
+
+                      {% endif %}
+        
+                      </div>
+
+                    </div>
+
+                </div>
+              </div>
+
+        </div>
+      </div> 
+<!-- END RISK -->
 
       <div class="row">
         <div class="col-md-12">
@@ -766,6 +863,19 @@
 
 <script>
   $(function () {
+    $("#risklist").DataTable({
+      "paging": true,
+      "searching": true,
+      "responsive": true, 
+      "lengthChange": false, 
+      "autoWidth": false,
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#risklist_wrapper .col-md-6:eq(0)');
+  });
+</script>
+
+<script>
+  $(function () {
     $("#appendixlist").DataTable({
       "paging": true,
       "searching": true,
@@ -789,6 +899,8 @@
     }).buttons().container().appendTo('#attackt_wrapper .col-md-6:eq(0)');
   });
 </script>
+
+
 
 
 
@@ -997,7 +1109,7 @@
             data : { 'delete_id': del_id},
 
             success : function(json) {
-              document.location.href = "/report/findings/{{DB_report_query.pk}}"; 
+              document.location.href = "/report/view/{{DB_report_query.pk}}"; 
             }
         })
   }
@@ -1037,5 +1149,25 @@
         })
   }
 </script>
+
+
+<script>
+  function DeleteID_R(del_id) {
+        $.ajax({
+            type: 'POST',
+            url: "/en/risk/delete/",
+            headers:{
+              "X-CSRFToken": '{{ csrf_token }}'
+            },
+            data : { 'delete_id': del_id},
+
+            success : function(json) {
+              document.location.href = "/report/view/{{DB_report_query.pk}}";
+            }
+        })
+  }
+</script>
+
+
 
 {% endblock javascripts %}

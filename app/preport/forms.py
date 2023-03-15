@@ -206,6 +206,7 @@ class NewFieldForm(forms.ModelForm):
 
 class NewRiskForm(forms.ModelForm):
 
+    
     inherent_probability_choice = (
         ('', _('(Select Inherent Risk Probability)')),
         ('Very High', _('Very High')),
@@ -303,7 +304,7 @@ class NewRiskForm(forms.ModelForm):
             'asset_category': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Asset Category")}),
             'asset_name': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Asset Name")}),
             'target_date': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': _("Target Date")}),
-
+            
         }
 
 

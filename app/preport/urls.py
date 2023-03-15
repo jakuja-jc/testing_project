@@ -78,7 +78,21 @@ urlpatterns = [
     # Risk Template
     path('risk/risk_template_list/', views.risk_list_template, name='risk_list_template'),
     path('risk/risk_template_add/', views.risk_add_template, name='risk_add_template'),
-    # path('risk/templateedit/<int:pk>', views.risk_edit, name='risk_edit'),
-    # path('risk/templatedelete/', views.risk_delete, name='risk_delete'),
-    # path('risk/templateview/<int:pk>', views.risk_view, name='risk_view'),
+    path('risk/risk_template_view/<int:pk>', views.risk_view_template, name='risk_view_template'),
+    path('risk/risk_template_edit/<int:pk>', views.risk_edit_template, name='risk_edit_template'),
+    path('risk/risk_template_delete/', views.risk_delete_template, name='risk_delete_template'),
+    path('risk/add/from_template/<int:pk>', views.risk_add_from_template, name='risk_add_from_template'),
+    path('risk/add/to_report/<int:pk>/<int:reportpk>', views.risk_add_to_report, name='risk_add_to_report'),
+    
+    # Risk
+    path('report/risk/<int:pk>', views.report_risk, name='report_risk'),
+    path('risk/view/<int:pk>', views.risk_view, name='risk_view'),
+    path('risk/add/<int:pk>', views.risk_add, name='risk_add'),
+    path('risk/edit/<int:pk>', views.risk_edit, name='risk_edit'),
+    path('risk/delete/', views.risk_delete, name='risk_delete'),
+
+
+
+
+
 ]
